@@ -54,51 +54,51 @@ func (w *Wordle) addGuess(g string) {
 }
 
 func (w *Wordle) toLetters(g string) []letter {
-    guessChars := charSlice(g)
+	guessChars := charSlice(g)
 	letters := make([]letter, len(guessChars))
 
-    wordCharsWithGuesses := charsWithGuesses(w.word)
+	wordCharsWithGuesses := charsWithGuesses(w.word)
 
 	for gi, gc := range guessChars {
 		if w.wordContains(gc) && w.wordContainsAtPosition(gc, gi) {
-            letters[gi] = letter{val: gc, color: Green}
+			letters[gi] = letter{val: gc, color: Green}
 			wordCharsWithGuesses[gi].guessed = true
 		}
 	}
 
-    for gi, gc := range charSlice(g) {
-        if wordCharsWithGuesses[gi].guessed {
-            continue
-        }
-
-		if !w.wordContains(gc) {
-            letters[gi] = letter{val: gc, color: DarkGray}
-            continue
+	for gi, gc := range charSlice(g) {
+		if wordCharsWithGuesses[gi].guessed {
+			continue
 		}
 
-        ind := strings.Index(w.word, gc)
-        exists := ind > -1
-        existsNotGuesssed := exists && !wordCharsWithGuesses[ind].guessed
-        if existsNotGuesssed {
-            letters[gi] = letter{val: gc, color: Yellow}
-            wordCharsWithGuesses[gi].guessed = true
-        } else {
-            letters[gi] = letter{val: gc, color: DarkGray }
-        }
+		if !w.wordContains(gc) {
+			letters[gi] = letter{val: gc, color: DarkGray}
+			continue
+		}
+
+		ind := strings.Index(w.word, gc)
+		exists := ind > -1
+		existsNotGuesssed := exists && !wordCharsWithGuesses[ind].guessed
+		if existsNotGuesssed {
+			letters[gi] = letter{val: gc, color: Yellow}
+			wordCharsWithGuesses[gi].guessed = true
+		} else {
+			letters[gi] = letter{val: gc, color: DarkGray}
+		}
 	}
 
 	return letters
 }
 
 type charWithGuess struct {
-    char string
-    guessed bool 
+	char    string
+	guessed bool
 }
 
 func charsWithGuesses(word string) []charWithGuess {
 	chars := []charWithGuess{}
 	for _, char := range charSlice(word) {
-        chars = append(chars,charWithGuess{ char: char, guessed: false })
+		chars = append(chars, charWithGuess{char: char, guessed: false})
 	}
 
 	return chars
