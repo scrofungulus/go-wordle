@@ -30,9 +30,9 @@ const (
 const TOTAL_GUESSES = 6
 
 func New() *Wordle {
-	// word := randomWord()
+	word := randomWord()
 	return &Wordle{
-		word: "hefts",
+		word: word,
 	}
 }
 
@@ -78,10 +78,9 @@ func (w *Wordle) toLetters(g string) []letter {
 
 		ind := strings.Index(w.word, gc)
 		exists := ind > -1
-		existsNotGuesssed := exists && !wordCharsWithGuesses[ind].guessed
-		if existsNotGuesssed {
+		existsNotGuessed := exists && !wordCharsWithGuesses[ind].guessed
+		if existsNotGuessed {
 			letters[gi] = letter{val: gc, color: Yellow}
-			wordCharsWithGuesses[gi].guessed = true
 		} else {
 			letters[gi] = letter{val: gc, color: DarkGray}
 		}
