@@ -38,7 +38,7 @@ func New() *Wordle {
 
 func (w *Wordle) Guess(g string) (bool, error) {
 	if !existsInWords(g) {
-		return false, fmt.Errorf(`"%s" does not exist in Gordle's list of words!`, g)
+		return false, fmt.Errorf(`"%s" does not exist in list of words!`, g)
 	}
 
 	w.addGuess(g)
@@ -78,9 +78,20 @@ func (w *Wordle) toLetters(g string) []letter {
 
 		ind := strings.Index(w.word, gc)
 		exists := ind > -1
-		existsNotGuessed := exists && !wordCharsWithGuesses[ind].guessed
+		existsNotGuessed := exists && !wordCharsWithGuesses[ind].guessed && func() bool {
+			present := false
+			for _, wc := range wordCharsWithGuesses {
+				if wc.char == gc && wc.present {
+					present = true
+				}
+			}
+
+			return !present
+		}()
+
 		if existsNotGuessed {
 			letters[gi] = letter{val: gc, color: Yellow}
+			wordCharsWithGuesses[ind].present = true
 		} else {
 			letters[gi] = letter{val: gc, color: DarkGray}
 		}
@@ -92,12 +103,13 @@ func (w *Wordle) toLetters(g string) []letter {
 type charWithGuess struct {
 	char    string
 	guessed bool
+	present bool
 }
 
 func charsWithGuesses(word string) []charWithGuess {
 	chars := []charWithGuess{}
 	for _, char := range charSlice(word) {
-		chars = append(chars, charWithGuess{char: char, guessed: false})
+		chars = append(chars, charWithGuess{char: char, guessed: false, present: false})
 	}
 
 	return chars
